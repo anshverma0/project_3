@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+</head>
+<body>
+    <h1>Weather App</h1>
+    <form id="weather-form">
+        <input type="text" id="city" name="city" placeholder="Enter city name" required>
+        <button type="submit">Get Weather</button>
+    </form>
+    <div id="weather-result"></div>
+
+    <script>
+        document.getElementById('weather-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const city = document.getElementById('city').value;
+
+            fetch('/weather', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({ 'city': city })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('weather-result').innerText = data.error;
+                } else {
+                    document.getElementById('weather-result').innerText = `
+                        City: ${data.city}
+                        Temperature: ${data.temperature}°C
+                        Description: ${data.description}
+                        Humidity: ${data.humidity}%
+                        Pressure: ${data.pressure} hPa
+                        Wind Speed: ${data.wind_speed} m/s
+                    `;
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
